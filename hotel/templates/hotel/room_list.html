@@ -1,0 +1,64 @@
+{% extends 'hotel/base.html' %}
+
+{% block title %}Номера - Гостиница{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Доступные номера</h1>
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Фильтры</h5>
+                <form method="get">
+                    <div class="mb-3">
+                        <label class="form-label">Категория</label>
+                        <select name="category" class="form-select">
+                            <option value="">Все категории</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Цена от</label>
+                        <input type="number" name="min_price" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Цена до</label>
+                        <input type="number" name="max_price" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Применить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="row">
+            {% for room in rooms %}
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    {% if room.image %}
+                        <img src="{{ room.image.url }}" class="card-img-top" alt="{{ room.category.name }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">Номер {{ room.room_number }}</h5>
+                        <p class="card-text">
+                            Категория: {{ room.category.name }}<br>
+                            Вместимость: {{ room.capacity }} чел.<br>
+                            Цена: {{ room.category.price }} руб./сутки
+                        </p>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'book_room' room.id %}" class="btn btn-primary">Забронировать</a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="btn btn-secondary">Войдите для бронирования</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

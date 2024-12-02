@@ -1,0 +1,28 @@
+{% extends 'hotel/base.html' %}
+
+{% block title %}Главная - Гостиница{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Добро пожаловать в нашу гостиницу</h1>
+
+<div class="row">
+    {% for category in categories %}
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ category.name }}</h5>
+                <p class="card-text">{{ category.description }}</p>
+                <p class="card-text">
+                    <small class="text-muted">
+                        Цена от {{ category.price }} руб./сутки
+                    </small>
+                </p>
+                <a href="{% url 'room_list' %}?category={{ category.id }}" class="btn btn-primary">
+                    Посмотреть номера
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

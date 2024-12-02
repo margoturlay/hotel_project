@@ -1,0 +1,53 @@
+{% extends 'hotel/base.html' %}
+
+{% block title %}Мои бронирования - Гостиница{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Мои бронирования</h1>
+
+{% if bookings %}
+    <div class="row">
+        {% for booking in bookings %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                {% if booking.room.image %}
+                    <img src="{{ booking.room.image.url }}" class="card-img-top" alt="{{ booking.room.category.name }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">Бронирование №{{ booking.id }}</h5>
+                    <p class="card-text">
+                        <strong>Номер:</strong> {{ booking.room.room_number }}<br>
+                        <strong>Категория:</strong> {{ booking.room.category.name }}<br>
+                        <strong>Дата заезда:</strong> {{ booking.check_in_date }}<br>
+                        <strong>Дата выезда:</strong> {{ booking.check_out_date }}<br>
+                        <strong>Статус:</strong>
+                        {% if booking.status == 'pending' %}
+                            <span class="badge bg-warning">Ожидает подтверждения</span>
+                        {% elif booking.status == 'confirmed' %}
+                            <span class="badge bg-success">Подтверждено</span>
+                        {% elif booking.status == 'cancelled' %}
+                            <span class="badge bg-danger">Отменено</span>
+                        {% elif booking.status == 'completed' %}
+                            <span class="badge bg-info">Завершено</span>
+                        {% endif %}
+                        <br>
+                        <strong>Итоговая цена:</strong> {{ booking.total_price }} руб.
+                    </p>
+                    {% if booking.status == 'pending' %}
+                        <form method="post" action="{% url 'cancel_booking' booking.id %}"
+                              onsubmit="return confirm('Вы уверены, что хотите отменить бронирование?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Отменить бронирование</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        У вас пока нет бронирований. <a href="{% url 'room_list' %}" class="alert-link">Посмотреть доступные номера</a>
+    </div>
+{% endif %}
+{% endblock %}
